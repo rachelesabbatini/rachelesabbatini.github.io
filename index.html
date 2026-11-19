@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rachele Sabbatini – XR Developer</title>
+    <meta name="description"
+        content="Portfolio of Rachele Sabbatini, XR developer with a background in UX research and digital humanities.">
+
+    <!-- Anteprima quando il link viene condiviso (LinkedIn, WhatsApp…) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rachele Sabbatini – XR Developer">
+    <meta property="og:description" content="I build VR experiences in Unity, and I test them with real people.">
+
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307080A'/%3E%3Ctext x='32' y='44' font-family='Impact,sans-serif' font-size='34' text-anchor='middle' fill='%23C6FF33'%3ERS%3C/text%3E%3C/svg%3E">
+
+    <!-- Prima che la pagina venga disegnata: classe "js" e alto contrasto salvato -->
+    <script>
+        document.documentElement.classList.add('js');
+        try {
+            if (localStorage.getItem('highContrast') === 'true') {
+                document.documentElement.classList.add('high-contrast');
+            }
+        } catch (e) { }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+    <button id="a11y-toggle" class="a11y-btn" type="button" aria-pressed="false" aria-label="High contrast mode">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 0 0 20z" fill="currentColor"></path>
+        </svg>
+    </button>
+
+    <div class="page">
+        <div class="ambient-bg" aria-hidden="true">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+
+        <div class="container">
+
+            <header class="site-header">
+                <a href="index.html" class="logo">RACHELE SABBATINI</a>
+                <nav class="site-nav" aria-label="Main">
+                    <a href="#work" class="navlink" aria-label="Work" data-scramble="WORK"><span
+                            aria-hidden="true">WORK</span></a>
+                    <a href="#about" class="navlink" aria-label="About" data-scramble="ABOUT"><span
+                            aria-hidden="true">ABOUT</span></a>
+                    <a href="#contact" class="navlink" aria-label="Contact" data-scramble="CONTACT"><span
+                            aria-hidden="true">CONTACT</span></a>
+                </nav>
+            </header>
+
+            <main>
+                <section class="hero">
+                    <h1 class="hero-title">
+                        <span class="w" style="--d: 0.10s">I</span>
+                        <span class="w" style="--d: 0.20s">build</span>
+                        <span class="w" style="--d: 0.30s">VR</span>
+                        <span class="w" style="--d: 0.40s">experiences</span>
+                        <span class="w" style="--d: 0.50s">in</span>
+                        <span class="w" style="--d: 0.60s">Unity,</span>
+                        <span class="w" style="--d: 0.74s">and</span>
+                        <span class="w" style="--d: 0.84s">I</span>
+                        <span class="w" style="--d: 0.94s">test</span>
+                        <span class="w" style="--d: 1.04s">them</span>
+                        <span class="w" style="--d: 1.14s">with</span>
+                        <span class="w accent" style="--d: 1.30s">real</span>
+                        <span class="w accent" style="--d: 1.42s">people.</span>
+                    </h1>
+                    <p class="hero-lead">XR designer with a background in UX research and digital humanities.</p>
+                    <div class="actions">
+                        <a href="SabbatiniRacheleCV.pdf" class="btn btn-primary">Download CV</a>
+                        <a href="mailto:rachele.sabbatini03@gmail.com" class="btn btn-secondary">Get in touch</a>
+                    </div>
+                </section>
+
+                <section id="work" class="work" aria-labelledby="work-title">
+                    <h2 id="work-title" class="section-title">Work</h2>
+                    <article class="project">
+                        <a href="leopardivr.html" class="medialink" aria-label="Open the LeopardiVR case study">
+                            <div class="cardmedia">
+                                <video src="video/leopardivr-loop.mp4#t=0.1" poster="video/leopardivr-loop-poster.jpg"
+                                    autoplay muted loop playsinline aria-hidden="true"></video>
+                            </div>
+                        </a>
+                        <div class="project-info">
+                            <h3 class="project-title">LeopardiVR</h3>
+                            <p class="project-desc">A VR experience for Meta Quest that lets people explore a poem in
+                                space. Designed, developed in C# and evaluated with 40 participants.</p>
+                            <dl class="meta">
+                                <dt>BUILT WITH</dt>
+                                <dd>Unity, C#, XR Interaction Toolkit</dd>
+                                <dt>PLATFORM</dt>
+                                <dd>Meta Quest 2 (standalone)</dd>
+                                <dt>CONTEXT</dt>
+                                <dd>Master's thesis, 2026</dd>
+                            </dl>
+                            <a href="leopardivr.html" class="btn btn-primary">Read the case study</a>
+                        </div>
+                    </article>
+                </section>
+
+                <section id="about" class="about">
+                    <div class="about-grid">
+                        <figure class="about-photo">
+                            <div class="profile-card">
+                                <img src="image/cv_rachele_bianco.png" alt="Rachele Sabbatini">
+                            </div>
+                        </figure>
+                        <div>
+                            <h2 class="section-title">Developer with a researcher's eye</h2>
+                            <p class="about-text">I started with a degree in History in Bologna, then specialized in
+                                Digital Humanities at the University of Pisa, where I discovered my passion for virtual
+                                reality and for how people interact with it.</p>
+                            <p class="about-text">I model, code and test what I build with real people, to understand
+                                what works and what doesn't, and to make every experience clear and comfortable for
+                                everyone.</p>
+                            <div class="skills">
+                                <div>
+                                    <h3>DEVELOPMENT</h3>
+                                    <ul>
+                                        <li>C# (Unity)</li>
+                                        <li>Event-driven architecture</li>
+                                        <li>Coroutines, DOTween</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3>XR AND 3D</h3>
+                                    <ul>
+                                        <li>XR Interaction Toolkit</li>
+                                        <li>Meta Quest</li>
+                                        <li>Blender, ProBuilder</li>
+                                        <li>NavMesh, Animator</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3>UX RESEARCH</h3>
+                                    <ul>
+                                        <li>Usability testing</li>
+                                        <li>Counterbalanced studies</li>
+                                        <li>Questionnaire design</li>
+                                        <li>Quantitative and qualitative analysis</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="experience" aria-labelledby="experience-title">
+                    <h2 id="experience-title" class="section-title">Experience and education</h2>
+                    <ol class="timeline">
+                        <li class="timeline-item">
+                            <p class="timeline-date">AUG 2026 – PRESENT</p>
+                            <div class="timeline-body">
+                                <h3>Digital Project &amp; UX Research Assistant, Sineglossa, Ancona</h3>
+                                <p>Designing user-testing methods and usability metrics for a conversational AI agent
+                                    in a museum, from user journeys to feedback tools.</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <p class="timeline-date">FEB – JUL 2026</p>
+                            <div class="timeline-body">
+                                <h3>Research Intern &amp; Master’s Thesis, Scuola Superiore Sant’Anna, Pisa</h3>
+                                <p>Sole developer and interaction designer of LeopardiVR, from Unity architecture and
+                                    3D modeling to user testing with 40 participants.</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <p class="timeline-date">2026</p>
+                            <div class="timeline-body">
+                                <h3>M.Sc. in Digital Humanities, University of Pisa</h3>
+                                <p>110/110 cum laude</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <p class="timeline-date">2021</p>
+                            <div class="timeline-body">
+                                <h3>B.A. in History, University of Bologna</h3>
+                                <p>110/110 cum laude</p>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+            </main>
+
+            <footer id="contact" class="site-footer">
+                <div>
+                    <p class="footer-cta">Let's <span class="accent">talk</span></p>
+                    <a href="mailto:rachele.sabbatini03@gmail.com"
+                        class="footer-email">rachele.sabbatini03@gmail.com</a>
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.linkedin.com/in/rachele-sabbatini-669364280/" class="navlink">LINKEDIN</a>
+                    <a href="https://github.com/rachelesabbatini" class="navlink">GITHUB</a>
+                    <a href="SabbatiniRacheleCV.pdf" class="navlink">DOWNLOAD CV</a>
+                    <span class="copyright">© 2026 RACHELE SABBATINI</span>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script src="assets/site.js"></script>
+</body>
+
+</html>

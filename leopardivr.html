@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LeopardiVR – Rachele Sabbatini</title>
+    <meta name="description"
+        content="LeopardiVR: a VR experience for Meta Quest that lets people explore a poem in space. Built in Unity and C#, tested with 40 participants.">
+    <script>document.documentElement.className = 'js';</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+                fontSize: '16px',
+                background: '#111316',
+                primaryColor: '#16181C',
+                primaryTextColor: '#F2F3F5',
+                primaryBorderColor: '#C6FF33',
+                lineColor: '#7A7E87',
+                clusterBkg: '#0C0D10',
+                clusterBorder: '#4A4458',
+                titleColor: '#A57CF5',
+                edgeLabelBackground: '#111316',
+                tertiaryColor: '#111316'
+            },
+            flowchart: {curve: 'basis', padding: 12}
+        });
+    </script>
+
+    <style>
+        /* =========================================
+           ACCESSIBILITÀ: BOTTONE E ALTO CONTRASTO
+           ========================================= */
+
+        /* 1. Stile del bottone accessibilità flottante */
+        .a11y-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9999;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #111316;
+            border: 1px solid #2A2D33;
+            color: #A3A7AE;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .a11y-btn:hover {
+            border-color: #C6FF33;
+            color: #C6FF33;
+            box-shadow: 0 0 20px rgba(198, 255, 51, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* 2. REGOLE QUANDO LA MODALITÀ È ATTIVA */
+
+        /* Stile del bottone attivo */
+        body.high-contrast .a11y-btn {
+            background: #000000 !important;
+            border-color: #FFFF00 !important;
+            color: #FFFF00 !important;
+        }
+
+        /* Forza lo sfondo nero ovunque */
+        body.high-contrast,
+        body.high-contrast>div {
+            background: #000000 !important;
+        }
+
+        /* Nasconde sfondi decorativi e griglie */
+        body.high-contrast .gridcolor,
+        body.high-contrast .gridlines,
+        body.high-contrast .cross-grid,
+        body.high-contrast .blob {
+            display: none !important;
+        }
+
+        /* Forza il testo al bianco puro */
+        body.high-contrast p,
+        body.high-contrast h1,
+        body.high-contrast h2,
+        body.high-contrast h3,
+        body.high-contrast div,
+        body.high-contrast span {
+            color: #FFFFFF !important;
+        }
+
+        /* Colora i link di giallo puro (standard ipovisione) */
+        body.high-contrast a,
+        body.high-contrast .btn-primary,
+        body.high-contrast .w {
+            color: #FFFF00 !important;
+            text-shadow: none !important;
+            background: transparent !important;
+            border-color: #FFFF00 !important;
+        }
+
+        body.high-contrast .seg {
+            color: #000000 !important;
+        }
+
+        body {
+            margin: 0;
+            background: #07080A
+        }
+
+        a {
+            color: #C6FF33
+        }
+
+        a:hover {
+            color: #DDFF85
+        }
+
+        .gridlines {
+            background-image: linear-gradient(rgba(255, 255, 255, .032) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .032) 1px, transparent 1px);
+            background-size: 24px 24px
+        }
+
+        @keyframes wordIn {
+            0% {
+                opacity: 0;
+                filter: blur(8px);
+                text-shadow: 0 0 30px rgba(198, 255, 51, .9)
+            }
+
+            55% {
+                opacity: 1;
+                filter: blur(0);
+                text-shadow: 0 0 22px rgba(198, 255, 51, .6)
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                text-shadow: 0 0 0 rgba(198, 255, 51, 0)
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-reverse {
+                display: flex !important;
+                flex-direction: column-reverse !important;
+            }
+        }
+
+        .w {
+            display: inline-block;
+            animation: wordIn .9s ease-out both
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .w {
+                animation: none
+            }
+        }
+
+        .navlink {
+            color: #F2F3F5;
+            text-decoration: none
+        }
+
+        .navlink:hover {
+            color: #C6FF33
+        }
+
+        .logo {
+            color: #F2F3F5;
+            text-decoration: none
+        }
+
+        .logo:hover {
+            color: #F2F3F5
+        }
+
+
+        /* Nasconde il sorgente Mermaid finché non è stato trasformato in SVG */
+        .mermaid:not([data-processed]) {
+            visibility: hidden;
+        }
+
+        .mermaid svg {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+            max-width: 400px !important;
+            margin: 0 auto;
+        }
+
+        .how-card img {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+            border: 1px solid #2A2D33;
+            background: #111316;
+        }
+
+        @keyframes sweep {
+            0% {
+                background-position: 0% 30%
+            }
+
+            100% {
+                background-position: 100% 70%
+            }
+        }
+
+        /* Contenitore fisso sullo schermo */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            filter: blur(70px);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            will-change: transform;
+        }
+
+        /* Blob 1: base Viola (#7D39EB) + livello Verde (#C6FF33) in dissolvenza */
+        .blob-dynamic-1 {
+            top: -15%;
+            left: 35%;
+            width: 75vw;
+            height: 75vw;
+            max-width: 950px;
+            max-height: 950px;
+            background: radial-gradient(closest-side, rgba(125, 57, 235, 0.55), rgba(125, 57, 235, 0));
+            animation: moveBlob1 10s ease-in-out infinite alternate;
+        }
+
+        .blob-dynamic-1::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(198, 255, 51, 0.40), rgba(198, 255, 51, 0));
+            animation: pulseOpacity 6s ease-in-out infinite alternate;
+        }
+
+        /* Blob 2: base Verde (#C6FF33) + livello Viola (#7D39EB) in dissolvenza */
+        .blob-dynamic-2 {
+            bottom: -20%;
+            left: -15%;
+            width: 70vw;
+            height: 70vw;
+            max-width: 850px;
+            max-height: 850px;
+            background: radial-gradient(closest-side, rgba(198, 255, 51, 0.35), rgba(198, 255, 51, 0));
+            animation: moveBlob2 12s ease-in-out infinite alternate;
+        }
+
+        .blob-dynamic-2::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(125, 57, 235, 0.55), rgba(125, 57, 235, 0));
+            animation: pulseOpacity 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes moveBlob1 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-30%, 35%) scale(1.25);
+            }
+        }
+
+        @keyframes moveBlob2 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(45%, -30%) scale(1.3);
+            }
+        }
+
+        /* Dissolvenza incrociata pura tra Viola e Verde (nessun colore RGB intermedio) */
+        @keyframes pulseOpacity {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .seg {
+            transition: width 1.2s cubic-bezier(.2, .8, .2, 1)
+        }
+
+        .seg:hover {
+            filter: brightness(1.12)
+        }
+
+        .js .fig {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity .8s ease-out, transform .8s ease-out
+        }
+
+        .js .fig.in {
+            opacity: 1;
+            transform: none
+        }
+
+        @media (max-width: 768px) {
+            .cross-grid {
+                display: none !important;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .gridcolor,
+            .drift1,
+            .drift2,
+            .drift3 {
+                animation: none
+            }
+
+            .seg,
+            .fig {
+                transition: none
+            }
+        }
+
+        /* Forza il carosello a stare nella sua colonna a sinistra senza spingere giù il testo */
+        .auto-reel {
+            position: relative;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        /* La prima slide dà l'altezza giusta alla colonna, le altre 4 ci stanno sopra */
+        .reel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            pointer-events: none;
+            animation: reelCycle5 17.5s infinite ease-in-out;
+        }
+
+        .reel-slide:first-child {
+            position: relative;
+        }
+
+        /* Scagliona le 5 foto di 3.5 secondi ciascuna */
+        .reel-slide:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .reel-slide:nth-child(2) {
+            animation-delay: 3.5s;
+        }
+
+        .reel-slide:nth-child(3) {
+            animation-delay: 7s;
+        }
+
+        .reel-slide:nth-child(4) {
+            animation-delay: 10.5s;
+        }
+
+        .reel-slide:nth-child(5) {
+            animation-delay: 14s;
+        }
+
+        /* Riquadro della sola immagine (16:10) */
+        .reel-frame {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            border-radius: 10px;
+            background: #111316;
+            border: 1px solid #2A2D33;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .reel-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            animation: subtleZoom 17.5s infinite ease-in-out;
+        }
+
+        .reel-slide:nth-child(1) .reel-frame img {
+            animation-delay: 0s;
+        }
+
+        .reel-slide:nth-child(2) .reel-frame img {
+            animation-delay: 3.5s;
+        }
+
+        .reel-slide:nth-child(3) .reel-frame img {
+            animation-delay: 7s;
+        }
+
+        .reel-slide:nth-child(4) .reel-frame img {
+            animation-delay: 10.5s;
+        }
+
+        .reel-slide:nth-child(5) .reel-frame img {
+            animation-delay: 14s;
+        }
+
+        /* Riquadro nero della nota posizionato SOTTO la foto */
+        .reel-caption {
+            margin-top: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: #111316;
+            border: 1px solid #2A2D33;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes reelCycle5 {
+            0% {
+                opacity: 0;
+            }
+
+            3%,
+            20% {
+                opacity: 1;
+            }
+
+            23%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes subtleZoom {
+
+            0%,
+            25% {
+                transform: scale(1);
+            }
+
+            20% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .reel-slide,
+            .reel-frame img {
+                animation: none;
+            }
+
+            .reel-slide:first-child {
+                opacity: 1;
+            }
+        }
+
+        .cardmedia video,
+        .cardmedia img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="a11y-toggle" class="a11y-btn" aria-label="Attiva/Disattiva Alto Contrasto">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 0 0 20z" fill="currentColor"></path>
+        </svg>
+    </button>
+    <div
+        style="position: relative; min-height: 100vh; background: #07080A; color: #F2F3F5; font-family: 'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif; overflow: hidden">
+
+        <div class="ambient-bg" aria-hidden="true">
+            <div class="blob blob-dynamic-1"></div>
+            <div class="blob blob-dynamic-2"></div>
+        </div>
+        <div style="position: relative; max-width: 1240px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px)">
+
+            <header
+                style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding: 32px 0">
+                <a href="index.html" class="navlink"
+                    style="font-family: 'Anton', Impact, sans-serif; font-size: clamp(24px, 3vw, 30px); letter-spacing: 0.02em">RACHELE
+                    SABBATINI</a>
+                <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 8px">
+
+                    <a href="index.html#work" aria-label="WORK" data-scramble="WORK" class="navlink"
+                        style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 16px; letter-spacing: 0.06em"><span
+                            aria-hidden="true">WORK</span></a>
+
+                    <a href="index.html#about" aria-label="ABOUT" data-scramble="ABOUT" class="navlink"
+                        style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 16px; letter-spacing: 0.06em"><span
+                            aria-hidden="true">ABOUT</span></a>
+
+                    <a href="#contact" aria-label="CONTACT" data-scramble="CONTACT" class="navlink"
+                        style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 16px; letter-spacing: 0.06em"><span
+                            aria-hidden="true">CONTACT</span></a>
+
+                </nav>
+            </header>
+
+            <section style="padding: clamp(64px, 12vw, 130px) 0 clamp(40px, 8vw, 72px); max-width: 1000px">
+                <p
+                    style="margin: 0; font-style: italic; font-size: clamp(30px, 4vw, 48px); line-height: 1.2; color: #D1D3D8">
+                    <span class="w" style="animation-delay: 0.10s">Che</span> <span class="w"
+                        style="animation-delay: 0.28s">fai</span> <span class="w"
+                        style="animation-delay: 0.46s">tu,</span> <span class="w"
+                        style="animation-delay: 0.70s">luna,</span> <span class="w"
+                        style="animation-delay: 0.94s">in</span> <span class="w"
+                        style="animation-delay: 1.12s">ciel?</span>
+                </p>
+                <p
+                    style="margin: 14px 0 0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A3A7AE">
+                    GIACOMO LEOPARDI, CANTO NOTTURNO DI UN PASTORE ERRANTE DELL'ASIA</p>
+                <h1
+                    style="margin: 72px 0 0; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: clamp(64px, 11vw, 150px); line-height: 0.95; text-transform: uppercase">
+                    Leopardi<span style="color: #C6FF33">VR</span></h1>
+                <p style="margin: 24px 0 0; font-size: 24px; line-height: 1.45; color: #D1D3D8; max-width: 720px">Can
+                    walking through a poem help people study it?</p>
+            </section>
+            <div class="cardmedia case-video">
+                <video src="video/leopardivr-case.mp4#t=0.1" poster="video/leopardivr-case-poster.jpg" autoplay muted
+                    loop playsinline controls></video>
+            </div>
+            <dl
+                style="margin: 40px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px 40px; padding: 32px 0; border-top: 1px solid #2A2D33; border-bottom: 1px solid #2A2D33">
+
+                <div>
+                    <dt
+                        style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5; margin-bottom: 8px">
+                        ROLE</dt>
+                    <dd style="margin: 0; font-size: 17px; line-height: 1.5">XR design, Unity development &amp; UX
+                        research (solo
+                        project)</dd>
+                </div>
+
+                <div>
+                    <dt
+                        style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5; margin-bottom: 8px">
+                        CONTEXT</dt>
+                    <dd style="margin: 0; font-size: 17px; line-height: 1.5">Master’s thesis, Digital Humanities,
+                        University of Pisa</dd>
+                </div>
+
+                <div>
+                    <dt
+                        style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5; margin-bottom: 8px">
+                        DURATION</dt>
+                    <dd style="margin: 0; font-size: 17px; line-height: 1.5">6 months</dd>
+                </div>
+
+                <div>
+                    <dt
+                        style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5; margin-bottom: 8px">
+                        PLATFORM</dt>
+                    <dd style="margin: 0; font-size: 17px; line-height: 1.5">Meta Quest 2 (standalone VR)</dd>
+                </div>
+
+                <div>
+                    <dt
+                        style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5; margin-bottom: 8px">
+                        BUILT WITH</dt>
+                    <dd style="margin: 0; font-size: 17px; line-height: 1.5">Unity, C#, XR Interaction Toolkit, DOTween,
+                        Blender, ProBuilder</dd>
+                </div>
+
+            </dl>
+            <!-- HOW IT WORKS: blocco introduttivo a 3 card, prima dello zig-zag -->
+            <section style="padding: 150px 0 0">
+                <h2
+                    style="margin: 0 0 20px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: clamp(40px, 6vw, 52px); line-height: 1.02; text-transform: uppercase">
+                    How it works</h2>
+                <p style="margin: 0 0 48px; font-size: 18px; line-height: 1.65; color: #D1D3D8; max-width: 680px">Three
+                    connected scenes. Every session starts in Leopardi's study, and every path leads back to it.</p>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 40px">
+
+                    <article class="how-card">
+                        <img src="image/how-studio.png"
+                            alt="Leopardi's study rebuilt in Unity, with the desk, a green lamp and bookshelves"
+                            loading="lazy">
+                        <p
+                            style="margin: 20px 0 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5">
+                            01 · HUB</p>
+                        <h3
+                            style="margin: 0 0 12px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 32px; line-height: 1.05; text-transform: uppercase">
+                            The study</h3>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #D1D3D8">A reconstruction of the
+                            poet's study in Recanati that doubles as menu and tutorial. Users learn the controllers by
+                            switching on a lamp and moving a ladder, then select a book to choose where to go.</p>
+                    </article>
+
+                    <article class="how-card">
+                        <img src="image/how-study.png"
+                            alt="A walkway suspended in a starry void with the moon in the distance" loading="lazy">
+                        <p
+                            style="margin: 20px 0 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5">
+                            02 · STUDY</p>
+                        <h3
+                            style="margin: 0 0 12px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 32px; line-height: 1.05; text-transform: uppercase">
+                            Information Landscape</h3>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #D1D3D8">A walkway suspended in
+                            space, with the moon always in view. Each stanza appears as you walk forward; selecting it
+                            plays the recitation and opens a paraphrase.</p>
+                    </article>
+
+                    <article class="how-card">
+                        <img src="image/how-play.png"
+                            alt="A night landscape with trees and an information panel, with the star progress HUD at the top"
+                            loading="lazy">
+                        <p
+                            style="margin: 20px 0 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A57CF5">
+                            03 · PLAY</p>
+                        <h3
+                            style="margin: 0 0 12px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 32px; line-height: 1.05; text-transform: uppercase">
+                            Gameplay Environment</h3>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #D1D3D8">A night landscape
+                            evoking the poem's Asian steppe. Interacting with objects reveals the stanzas in one of four
+                            orders drawn from scholarly readings of Leopardi's manuscript. Each completed path earns a
+                            star.</p>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- 3. ZIG: Testo a SINISTRA | Grafico Stanze (Scalabile) a DESTRA -->
+            <section
+                style="padding: 150px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 64px; align-items: center">
+                <div>
+                    <h2
+                        style="margin: 0 0 28px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 52px; line-height: 1.02; text-transform: uppercase">
+                        Combinatorial State Machine &amp; Philology</h2>
+                    <p style="margin: 0 0 18px; font-size: 18px; line-height: 1.65; color: #D1D3D8">The manuscript shows
+                        that Leopardi changed the order of the poem's six stanzas, numbering them by hand. From this
+                        philological evidence and critical literature, I derived four reading paths implemented as a
+                        4-branch state tree.</p>
+                    <p style="margin: 0; font-size: 18px; line-height: 1.65; color: #D1D3D8">In the Gameplay
+                        Environment, interacting with custom XR objects unlocks the paths one at a time, persisting
+                        progression via <code>PlayerPrefs</code>. Each path ends back in the study.</p>
+                </div>
+
+                <figure
+                    style="margin: 0; padding: 28px 24px 20px; border-radius: 10px; background: rgba(17,19,22,0.85); border: 1px solid #2A2D33">
+                    <figcaption
+                        style="margin: 0 0 16px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A3A7AE">
+                        STANZA ORDER IN EACH READING PATH · NUMBERS = STANZAS</figcaption>
+                    <svg viewBox="0 0 760 448" style="width: 100%; height: auto; display: block; overflow: visible">
+                        <g stroke="#5A5D66" stroke-width="1.5" stroke-linecap="round" fill="none">
+                            <path d="M 64 224 L 144 224" />
+                            <path d="M 184 224 L 224 224" />
+                            <path d="M 224 48 L 224 312" />
+                            <path d="M 224 48 L 264 48" />
+                            <path d="M 224 136 L 264 136" />
+                            <path d="M 224 312 L 264 312" />
+                            <path d="M 304 48 L 384 48" />
+                            <path d="M 424 48 L 504 48" />
+                            <path d="M 304 312 L 384 312" />
+                            <path d="M 424 312 L 504 312" />
+                            <path d="M 344 312 L 344 400" />
+                            <path d="M 344 400 L 384 400" />
+                            <path d="M 424 400 L 504 400" />
+                            <path d="M 544 400 L 624 400" />
+                        </g>
+                        <g fill="#07080A" stroke="#C6FF33" stroke-width="1.5">
+                            <circle cx="44" cy="224" r="20" />
+                            <circle cx="164" cy="224" r="20" />
+                            <circle cx="284" cy="48" r="20" />
+                            <circle cx="404" cy="48" r="20" />
+                            <circle cx="524" cy="48" r="20" />
+                            <circle cx="284" cy="136" r="20" />
+                            <circle cx="284" cy="312" r="20" />
+                            <circle cx="404" cy="312" r="20" />
+                            <circle cx="524" cy="312" r="20" />
+                            <circle cx="404" cy="400" r="20" />
+                            <circle cx="524" cy="400" r="20" />
+                            <circle cx="644" cy="400" r="20" />
+                        </g>
+                        <g fill="#F2F3F5" font-family="'Hanken Grotesk', sans-serif" font-size="15" text-anchor="middle"
+                            dominant-baseline="central">
+                            <text x="44" y="224">1</text><text x="164" y="224">2</text>
+                            <text x="284" y="48">3</text><text x="404" y="48">4</text><text x="524" y="48">5</text>
+                            <text x="284" y="136">4</text>
+                            <text x="284" y="312">5</text><text x="404" y="312">4</text><text x="524" y="312">3</text>
+                            <text x="404" y="400">3</text><text x="524" y="400">4</text><text x="644" y="400">6</text>
+                        </g>
+                        <g fill="#A57CF5" font-family="'JetBrains Mono', monospace" font-size="13"
+                            dominant-baseline="central">
+                            <text x="568" y="48">PATH 1</text>
+                            <text x="328" y="136">PATH 2</text>
+                            <text x="568" y="312">PATH 3</text>
+                            <text x="688" y="400">PATH 4</text>
+                        </g>
+                    </svg>
+                </figure>
+            </section>
+
+            <!-- 2. ZIG: Testo a Destra | Immagini a Sinistra -->
+            <section class="mobile-reverse"
+                style="padding: 150px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 64px; align-items: center">
+
+                <div class="auto-reel">
+
+                    <!-- 1. Studio in ProBuilder (Vista ampia) -->
+                    <figure class="reel-slide" style="margin: 0">
+                        <div class="reel-frame">
+                            <img src="image/study-lightmaps.png"
+                                alt="Leopardi's study in Recanati rebuilt in Unity with ProBuilder">
+                        </div>
+                        <figcaption class="reel-caption">
+                            <span style="font-size: 14px; color: #D1D3D8">Leopardi's study rebuilt in Unity with
+                                ProBuilder</span>
+                            <span
+                                style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #C6FF33; flex-shrink: 0">01
+                                / 05</span>
+                        </figcaption>
+                    </figure>
+
+                    <!-- 2. Dettaglio Scrivania e Lightmap Baked -->
+                    <figure class="reel-slide" style="margin: 0">
+                        <div class="reel-frame">
+                            <img src="image/study-desk.png"
+                                alt="Close-up of the desk with baked Shadowmask lighting and interactive props">
+                        </div>
+                        <figcaption class="reel-caption">
+                            <span style="font-size: 14px; color: #D1D3D8">Interactive desk props and baked
+                                light</span>
+                            <span
+                                style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #C6FF33; flex-shrink: 0">02
+                                / 05</span>
+                        </figcaption>
+                    </figure>
+
+                    <!-- 3. Libro dei Canti animato in Blender -->
+                    <figure class="reel-slide" style="margin: 0">
+                        <div class="reel-frame">
+                            <img src="image/blender-book.png" alt="3D book of the Canti modeled and animated in Blender"
+                                style="object-fit: contain; background: #1E1E1E;">
+                        </div>
+                        <figcaption class="reel-caption">
+                            <span style="font-size: 14px; color: #D1D3D8">The book of the Canti modeled
+                                in Blender</span>
+                            <span
+                                style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #C6FF33; flex-shrink: 0">03
+                                / 05</span>
+                        </figcaption>
+                    </figure>
+
+                    <!-- 4. Stanze 3D in Blender -->
+                    <figure class="reel-slide" style="margin: 0">
+                        <div class="reel-frame">
+                            <img src="image/blender-stanzas.png" alt="3D extruded verses modeled in Blender 4.0">
+                        </div>
+                        <figcaption class="reel-caption">
+                            <span style="font-size: 14px; color: #D1D3D8">3D stanzas modeled in Blender 4.0 </span>
+                            <span
+                                style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #C6FF33; flex-shrink: 0">04
+                                / 05</span>
+                        </figcaption>
+                    </figure>
+
+                    <!-- 5. Atmosfera notturna e Linear Fog -->
+                    <figure class="reel-slide" style="margin: 0">
+                        <div class="reel-frame">
+                            <img src="image/night-fog.png"
+                                alt="Night landscape in Unity with Linear Fog and animated flock">
+                        </div>
+                        <figcaption class="reel-caption">
+                            <span style="font-size: 14px; color: #D1D3D8">Gameplay Environment: night atmosphere with
+                                Linear
+                                Fog and NavMesh entities</span>
+                            <span
+                                style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #C6FF33; flex-shrink: 0">05
+                                / 05</span>
+                        </figcaption>
+                    </figure>
+
+                </div>
+
+                <div>
+                    <h2
+                        style="margin: 0 0 28px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 52px; line-height: 1.02; text-transform: uppercase">
+                        Level design, 3D modeling &amp; Quest optimization</h2>
+                    <p style="margin: 0 0 18px; font-size: 18px; line-height: 1.65; color: #D1D3D8">I rebuilt Leopardi's
+                        study in Unity with ProBuilder, using photographs of the real room in Recanati as reference,
+                        and furnished it with Sketchfab assets; the windows look out on a 360° image of the real square
+                        outside. I modeled the 3D stanzas and the book of the Canti in Blender.</p>
+                    <p style="margin: 0; font-size: 18px; line-height: 1.65; color: #D1D3D8">Because real-time indirect
+                        lighting causes severe mobile GPU bottlenecks on standalone headsets, the lighting was baked and
+                        paired with Linear Fog for the night
+                        atmosphere.</p>
+                </div>
+            </section>
+
+            <!-- 3. ZIG: Testo a SINISTRA | Diagramma Mermaid a DESTRA -->
+            <section
+                style="padding: 150px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 64px; align-items: center">
+                <div>
+                    <h2
+                        style="margin: 0 0 28px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 52px; line-height: 1.02; text-transform: uppercase">
+                        C# architecture and VR interaction</h2>
+                    <p style="margin: 0 0 24px; font-size: 18px; line-height: 1.65; color: #D1D3D8">Built in Unity 6
+                        (URP) with OpenXR and the XR Interaction Toolkit, running standalone on Meta Quest 2.</p>
+                    <ul
+                        style="margin: 0; padding: 0 0 0 20px; display: grid; gap: 14px; font-size: 17px; line-height: 1.6; color: #D1D3D8">
+                        <li><span style="color: #F2F3F5; font-weight: 600">Custom XR Interactables.</span> Subclassed
+                            <code>XRGrabInteractable</code> and <code>XRSimpleInteractable</code>, overriding
+                            <code>OnHoverEntered</code> and <code>OnSelectEntered</code> for outline feedback, and
+                            forcing
+                            a clean release with <code>interactionManager.SelectExit()</code> before disabling a held
+                            object.
+                        </li>
+                        <li><span style="color: #F2F3F5; font-weight: 600">Spatial subtitles.</span> Lines loaded from
+                            JSON through a wrapper for <code>JsonUtility</code>, shown on a panel that lazily follows
+                            the user's gaze (<code>Vector3.Lerp</code>) to reduce discomfort.</li>
+                        <li><span style="color: #F2F3F5; font-weight: 600">Audio-synced 3D text.</span> Verses modeled
+                            in Blender fade in and out following the playback time of the recitation, with each
+                            <code>Renderer</code> cached up front.
+                        </li>
+                        <li><span style="color: #F2F3F5; font-weight: 600">Progress across scenes.</span> A persistent
+                            Singleton (<code>DontDestroyOnLoad</code>) saves the four reading paths in
+                            <code>PlayerPrefs</code> and raises C# events, so the star HUD updates without polling.
+                            Quitting clears the save, so every test participant starts fresh.
+                        </li>
+                        <li><span style="color: #F2F3F5; font-weight: 600">NPCs.</span> Characters built in Adobe Fuse,
+                            rigged with Mixamo, moved by <code>NavMeshAgent</code> and driven by Animator states,
+                            triggered by the user's actions.</li>
+                    </ul>
+                    <a href="https://github.com/rachelesabbatini/LeopardiVR"
+                        style="display: inline-block; margin-top: 28px; font-size: 16px; font-weight: 600">Read the
+                        scripts on GitHub</a>
+                </div>
+
+                <figure
+                    style="margin: 0; padding: 24px; border-radius: 10px; background: rgba(17,19,22,0.85); border: 1px solid #2A2D33">
+                    <figcaption
+                        style="margin: 0 0 16px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #A3A7AE">
+                        APPLICATION ARCHITECTURE</figcaption>
+                    <div class="mermaid" role="img"
+                        aria-label="Architecture diagram: the StudioLeo hub loads either the Study scene or the Play scene. In the Play scene, custom XR interactables drive subtitles, word sync and NPCs, and unlock paths in a persistent AchievementManager that saves to PlayerPrefs and notifies the star HUD through events.">
+                        flowchart TD
+                        subgraph HUB["StudioLeo · hub"]
+                        BOOK["Book → MainMenu"]
+                        end
+                        subgraph STUDY["Study scene"]
+                        VT["VersiTrigger<br />VersiVRInteraction"]
+                        end
+                        subgraph PLAY["Play scene"]
+                        INT["Custom XR<br />interactables"] --> SYS["Subtitles · WordSync<br />NPC NavMesh"]
+                        end
+                        subgraph PERSIST["Persistent"]
+                        ACH["AchievementManager<br /><i>Singleton</i>"] <--> PP[("PlayerPrefs")]
+                            ACH -.->|events| HUD["Star HUD"]
+                            end
+                            BOOK --> VT
+                            BOOK --> INT
+                            INT -->|unlock path| ACH
+                            SYS ~~~ ACH
+                            VT ~~~ INT
+                    </div>
+                </figure>
+            </section>
+
+
+
+            <!-- 4. ZAG: Grafico Risultati a SINISTRA | Testo User Study a DESTRA -->
+            <section id="study" style="padding: 150px 0 0">
+                <div class="mobile-reverse"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 64px; align-items: center">
+
+                    <figure
+                        style="margin: 0; padding: 32px; border-radius: 10px; background: #111316; border: 1px solid #2A2D33">
+                        <figcaption style="margin: 0 0 24px; font-size: 18px; color: #F2F3F5">Which environment helped
+                            you more?</figcaption>
+                        <div
+                            style="display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; font-size: 14px; color: #D1D3D8">
+                            <span style="display: inline-flex; align-items: center; gap: 8px"><span
+                                    style="width: 14px; height: 14px; border-radius: 3px; background: #A57CF5"></span>Information
+                                Landscape</span>
+                            <span style="display: inline-flex; align-items: center; gap: 8px"><span
+                                    style="width: 14px; height: 14px; border-radius: 3px; background: #C6FF33"></span>Gameplay
+                                Environment</span>
+                            <span style="display: inline-flex; align-items: center; gap: 8px"><span
+                                    style="width: 14px; height: 14px; border-radius: 3px; background: #2A2D33; border: 1px solid #4A4D55"></span>No
+                                answer</span>
+                        </div>
+                        <div style="display: grid; gap: 22px">
+
+                            <div>
+                                <p style="margin: 0 0 8px; font-size: 15px; color: #D1D3D8">Attention to the text</p>
+                                <div
+                                    style="display: flex; height: 34px; border-radius: 4px; overflow: hidden; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #07080A">
+                                    <div class="seg"
+                                        style="width: 42.5%; transition-delay: 0.30s; background: #A57CF5; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        42.5% (17)</div>
+                                    <div class="seg"
+                                        style="width: 57.5%; transition-delay: 0.30s; background: #C6FF33; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        57.5% (23)</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p style="margin: 0 0 8px; font-size: 15px; color: #D1D3D8">Understanding the poem</p>
+                                <div
+                                    style="display: flex; height: 34px; border-radius: 4px; overflow: hidden; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #07080A">
+                                    <div class="seg"
+                                        style="width: 62.5%; transition-delay: 0.48s; background: #A57CF5; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        62.5% (25)</div>
+                                    <div class="seg"
+                                        style="width: 35%; transition-delay: 0.48s; background: #C6FF33; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        35% (14)</div>
+                                    <div class="seg" style="width: 2.5%; transition-delay: 0.48s; background: #2A2D33">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p style="margin: 0 0 8px; font-size: 15px; color: #D1D3D8">Remembering verses and
+                                    concepts</p>
+                                <div
+                                    style="display: flex; height: 34px; border-radius: 4px; overflow: hidden; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #07080A">
+                                    <div class="seg"
+                                        style="width: 30%; transition-delay: 0.66s; background: #A57CF5; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        30% (12)</div>
+                                    <div class="seg"
+                                        style="width: 67.5%; transition-delay: 0.66s; background: #C6FF33; display: flex; align-items: center; overflow: hidden; white-space: nowrap; padding-left: 10px; box-sizing: border-box">
+                                        67.5% (27)</div>
+                                    <div class="seg" style="width: 2.5%; transition-delay: 0.66s; background: #2A2D33">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <p style="margin: 24px 0 0; font-size: 14px; color: #A3A7AE">Share of participants (N=40). One
+                            participant did not answer the last two questions.</p>
+                    </figure>
+
+                    <div>
+                        <h2
+                            style="margin: 0 0 28px; font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 52px; line-height: 1.02; text-transform: uppercase">
+                            User study</h2>
+                        <p style="margin: 0 0 18px; font-size: 18px; line-height: 1.65; color: #D1D3D8">A
+                            counterbalanced study with 40 participants on Meta Quest 2: half started with the
+                            Information Landscape, half with the Gameplay Environment. I watched every session live
+                            through headset casting, then ran a 26-item questionnaire on a 5-point Likert scale, with
+                            reverse-scored items to limit response bias.</p>
+                        <p style="margin: 0 0 18px; font-size: 18px; line-height: 1.65; color: #D1D3D8">The two
+                            environments did different jobs: the Information Landscape helped more with understanding
+                            the poem, the Gameplay Environment with remembering it. Asked which one best represents the
+                            poem, <strong>46%</strong> chose the Gameplay Environment, another <strong>46%</strong> said
+                            both, and fewer than 8% picked the Information Landscape alone. Participants who rarely or
+                            never read gave the highest engagement score (<strong>4.88/5</strong>, SD&nbsp;=&nbsp;0.35,
+                            n&nbsp;=&nbsp;8), above regular readers (4.47).</p>
+                        <p style="margin: 0; font-size: 18px; line-height: 1.65; color: #D1D3D8">The lowest score was
+                            concentration on the text (<strong>3.9/5</strong>), and some first-time users struggled with
+                            the controllers. In a next version I would reduce visual distraction around the verses, make
+                            the controller tutorial gentler, let users turn off the narration, add interactive notes on
+                            single words and an in-game menu to track progress.</p>
+                    </div>
+
+                </div>
+
+                <!-- I 4 grandi numeri riassuntivi (4.3/5, ecc.) sotto a tutta larghezza -->
+                <div
+                    style="margin-top: 64px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; padding-top: 48px; border-top: 1px solid #2A2D33">
+                    <div class="fig" style="transition-delay: 0.00s">
+                        <p
+                            style="margin: 0; font-family: 'Anton', Impact, sans-serif; font-size: 56px; line-height: 1; color: #C6FF33">
+                            4.3/5</p>
+                        <p style="margin: 10px 0 0; font-size: 16px; color: #D1D3D8">Immersion and presence</p>
+                    </div>
+                    <div class="fig" style="transition-delay: 0.12s">
+                        <p
+                            style="margin: 0; font-family: 'Anton', Impact, sans-serif; font-size: 56px; line-height: 1; color: #C6FF33">
+                            4.3/5</p>
+                        <p style="margin: 10px 0 0; font-size: 16px; color: #D1D3D8">Usability</p>
+                    </div>
+                    <div class="fig" style="transition-delay: 0.24s">
+                        <p
+                            style="margin: 0; font-family: 'Anton', Impact, sans-serif; font-size: 56px; line-height: 1; color: #C6FF33">
+                            4.2/5</p>
+                        <p style="margin: 10px 0 0; font-size: 16px; color: #D1D3D8">Comfort (no motion sickness)</p>
+                    </div>
+                    <div class="fig" style="transition-delay: 0.36s">
+                        <p
+                            style="margin: 0; font-family: 'Anton', Impact, sans-serif; font-size: 56px; line-height: 1; color: #C6FF33">
+                            97.5%</p>
+                        <p style="margin: 10px 0 0; font-size: 16px; color: #D1D3D8">Said it was useful for studying the
+                            poem</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer id="contact"
+                style="padding: 170px 0 64px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: end">
+                <a href="index.html"
+                    style="font-family: 'Anton', Impact, sans-serif; font-size: 40px; text-transform: uppercase">Back to
+                    all work</a>
+                <div
+                    style="display: flex; flex-wrap: wrap; gap: 28px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 14px">
+                    <a href="mailto:rachele.sabbatini03@gmail.com" class="navlink">EMAIL</a>
+                    <a href="https://www.linkedin.com/in/rachele-sabbatini-669364280" class="navlink">LINKEDIN</a>
+                    <a href="https://github.com/rachelesabbatini" class="navlink">GITHUB</a>
+                    <a href="SabbatiniRacheleCV.pdf" class="navlink">DOWNLOAD CV</a>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+    <script src="assets/site.js"></script>
+</body>
+
+</html>
